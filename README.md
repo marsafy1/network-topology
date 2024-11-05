@@ -1,6 +1,7 @@
 # Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A simple project to practice draggable components, creating dynamic positions by dragging items, creating dynamic links between elements.
+
 ![Packet Tracer Lite](https://github.com/marsafy1/network-topology/blob/master/src/assets/devices/demo/demo.png)
 
 ## Available Scripts
