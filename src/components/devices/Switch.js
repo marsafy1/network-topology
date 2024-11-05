@@ -1,8 +1,8 @@
 import React from "react";
 import DraggableItem from "../dragging/DraggableItem";
-export default function Switch() {
+export default function Switch({ id }) {
   return (
-    <DraggableItem>
+    <DraggableItem id={id}>
       <div>Switch</div>
     </DraggableItem>
   );

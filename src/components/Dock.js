@@ -6,9 +6,9 @@ import Device from "./devices/Device";
 export default function Dock() {
   return (
     <div className="flex justify-between items-center w-full p-2 border-2">
-      <Switch />
-      <Router />
-      <Device />
+      <Switch id="default-switch" />
+      <Router id="default-router" />
+      <Device id="default-device" />
     </div>
   );
 }

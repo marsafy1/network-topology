@@ -1,7 +1,7 @@
 // DraggableItem.js
 import React from "react";
 
-const DraggableItem = ({ id, children }) => {
+const DraggableItem = ({ id, position, children }) => {
   const handleDragStart = (event) => {
     event.dataTransfer.setData("text/plain", id);
   };
@@ -13,7 +13,7 @@ const DraggableItem = ({ id, children }) => {
       onDragStart={handleDragStart}
       style={{
         width: 100,
-        height: "100%",
+        height: 50,
         backgroundColor: "lightblue",
         cursor: "grab",
         display: "inline-block",
