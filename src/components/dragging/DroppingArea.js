@@ -3,16 +3,21 @@ import React, { useState, useEffect } from "react";
 import Device from "../devices/Device";
 import Router from "../devices/Router";
 import Switch from "../devices/Switch";
+import Linkable from "../interactions/Linkable";
 
 const DropZone = () => {
   const [itemsIds, setItemsIds] = useState([]);
   const [visualItems, setVisualItems] = useState([]);
+  const [dynamicField, setDynamicField] = useState({});
+  const [lines, setLines] = useState([]);
   const [itemsCount, setItemsCount] = useState({
     router: 0,
     switch: 0,
     device: 0,
   });
-  const [dynamicField, setDynamicField] = useState({});
+  const [linkedElements, setLinkedelements] = useState([]); // will be pairs
+  const [firstSelectedElement, setFirstSelectedElement] = useState(undefined);
+  const [secondSelectedElement, setSecondSelectedElement] = useState(undefined);
 
   const handleDragOver = (event) => {
     event.preventDefault(); // Allows dropping
@@ -29,6 +34,7 @@ const DropZone = () => {
       left: 0,
       top: 0,
     };
+
     setDynamicField(updatedDynamicField);
 
     return createVisualComponent(componentType, identifier);
@@ -72,6 +78,8 @@ const DropZone = () => {
         left: offsetX,
         top: offsetY,
       };
+
+      setLines([]);
       setDynamicField(updatedDynamicField);
 
       console.log(dynamicField);
@@ -127,12 +135,84 @@ const DropZone = () => {
     });
   };
 
+  const handleClick = (id) => {
+    console.log("Clicked ", id);
+
+    if (!firstSelectedElement) {
+      setFirstSelectedElement(id);
+    } else if (!secondSelectedElement) {
+      setSecondSelectedElement(id);
+    }
+  };
+
+  const updateLines = () => {
+    console.log(lines);
+    linkedElements.forEach((line) => {
+      console.log("Line #1", line[0]);
+      console.log("Line #2", line[1]);
+      handleNewLink(line[0], line[1]);
+    });
+  };
+
+  const handleNewLink = (firstElemId, secondElemId) => {
+    const firstElem = document.getElementById(firstElemId);
+    const secondElem = document.getElementById(secondElemId);
+
+    // Calculate the center points of each element
+    const firstRect = firstElem.getBoundingClientRect();
+    const secondRect = secondElem.getBoundingClientRect();
+
+    const firstCenterX = firstRect.left + firstRect.width / 2;
+    const firstCenterY = firstRect.top + firstRect.height / 2;
+    const secondCenterX = secondRect.left + secondRect.width / 2;
+    const secondCenterY = secondRect.top + secondRect.height / 2;
+
+    // Use functional state update to add the new line
+    setLines((prevLines) => [
+      ...prevLines,
+      {
+        x1: firstCenterX,
+        y1: firstCenterY,
+        x2: secondCenterX,
+        y2: secondCenterY,
+      },
+    ]);
+  };
+
   useEffect(() => {
     console.log("Rebuilding");
     console.log(dynamicField);
+    console.log(visualItems);
+    console.log(itemsIds);
     updatePositions();
   }, [dynamicField]);
 
+  useEffect(() => {
+    if (lines.length === 0) {
+      console.log("Redrawing");
+      console.log(linkedElements);
+      updateLines();
+    }
+  }, [lines]);
+
+  useEffect(() => {
+    if (firstSelectedElement && secondSelectedElement) {
+      console.log(
+        `Will link ${firstSelectedElement} with ${secondSelectedElement}`
+      );
+      setLinkedelements([
+        ...linkedElements,
+        [firstSelectedElement, secondSelectedElement],
+      ]);
+      handleNewLink(firstSelectedElement, secondSelectedElement);
+      setFirstSelectedElement(undefined);
+      setSecondSelectedElement(undefined);
+    }
+  }, [firstSelectedElement, secondSelectedElement]);
+
+  useEffect(() => {
+    console.log(linkedElements);
+  }, [linkedElements]);
   return (
     <div
       onDragOver={handleDragOver}
@@ -149,8 +229,34 @@ const DropZone = () => {
       }}
     >
       {/* <div>{visualItems ? `Dropped: ${visualItems.length}` : "Drop here"}</div> */}
+      {/* SVG to render the lines */}
+      <svg
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+        }}
+      >
+        {lines.map((line, index) => (
+          <line
+            key={index}
+            x1={line.x1}
+            y1={line.y1}
+            x2={line.x2}
+            y2={line.y2}
+            stroke="black"
+            strokeWidth="2"
+          />
+        ))}
+      </svg>
       <div className="flex justify-around w-full p-4">
-        {visualItems.map((item) => item)}
+        {visualItems.map((item) => (
+          <Linkable key={item.key} handleClick={() => handleClick(item.key)}>
+            {item}
+          </Linkable>
+        ))}
       </div>
     </div>
   );
