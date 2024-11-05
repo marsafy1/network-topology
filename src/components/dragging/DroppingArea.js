@@ -4,6 +4,7 @@ import Device from "../devices/Device";
 import Router from "../devices/Router";
 import Switch from "../devices/Switch";
 import Linkable from "../interactions/Linkable";
+import Line from "../utils/Line";
 
 const DropZone = () => {
   const [itemsIds, setItemsIds] = useState([]);
@@ -171,12 +172,24 @@ const DropZone = () => {
     setLines((prevLines) => [
       ...prevLines,
       {
+        firstElemId: firstElemId,
+        secondElemId: secondElemId,
         x1: firstCenterX,
         y1: firstCenterY,
         x2: secondCenterX,
         y2: secondCenterY,
       },
     ]);
+  };
+
+  const handleLineClick = (firstId, secondId) => {
+    console.log(linkedElements);
+    console.log(`will remove ${firstId} and ${secondId}`);
+    let updatedLinkedElements = [...linkedElements];
+    updatedLinkedElements = updatedLinkedElements.filter(
+      (link) => !(link[0] === firstId && link[1] === secondId)
+    );
+    setLinkedelements(updatedLinkedElements);
   };
 
   useEffect(() => {
@@ -212,6 +225,9 @@ const DropZone = () => {
 
   useEffect(() => {
     console.log(linkedElements);
+    console.log("Redrawing");
+    console.log(linkedElements);
+    setLines([]);
   }, [linkedElements]);
   return (
     <div
@@ -240,17 +256,20 @@ const DropZone = () => {
         }}
       >
         {lines.map((line, index) => (
-          <line
+          <Line
             key={index}
-            x1={line.x1}
-            y1={line.y1}
-            x2={line.x2}
-            y2={line.y2}
-            stroke="black"
-            strokeWidth="2"
+            line={line}
+            handleClick={() =>
+              handleLineClick(line.firstElemId, line.secondElemId)
+            }
           />
         ))}
       </svg>
+      {visualItems.length == 0 && (
+        <div className="flex justify-center items-center w-full h-full p-4">
+          Empty
+        </div>
+      )}
       <div className="flex justify-around w-full p-4">
         {visualItems.map((item) => (
           <Linkable key={item.key} handleClick={() => handleClick(item.key)}>

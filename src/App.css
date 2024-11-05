@@ -10,3 +10,16 @@
 .selected {
   border: 1px solid red;
 }
+
+.linking-line {
+  stroke: blue;
+  stroke-width: 4px;
+  cursor: pointer;
+
+  transition: all 0.3s;
+}
+
+.linking-line:hover {
+  stroke: red;
+  stroke-width: 4px;
+}
