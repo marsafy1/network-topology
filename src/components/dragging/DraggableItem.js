@@ -12,9 +12,7 @@ const DraggableItem = ({ id, position, children }) => {
       draggable="true"
       onDragStart={handleDragStart}
       style={{
-        width: 100,
-        height: 50,
-        backgroundColor: "lightblue",
+        // backgroundColor: "lightblue",
         cursor: "grab",
         display: "inline-block",
       }}

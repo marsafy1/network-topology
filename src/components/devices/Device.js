@@ -1,11 +1,14 @@
 import React from "react";
 import DraggableItem from "../dragging/DraggableItem";
-import Linkable from "../interactions/Linkable";
+import ComputerImg from "../../assets/devices/endpoint.png";
 
 export default function Device({ id }) {
   return (
     <DraggableItem id={id}>
-      <div>Device</div>
+      <div className="device">
+        <img src={ComputerImg} alt="Endpoint" />
+        <div>Endpoint</div>
+      </div>
     </DraggableItem>
   );
 }
